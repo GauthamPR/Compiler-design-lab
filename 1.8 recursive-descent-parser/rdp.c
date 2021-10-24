@@ -1,14 +1,4 @@
 #include <stdio.h>
-/*
-
-Recursive Descent Parser
-------------------------
-
-Grammar:
-    E   ->  rE'
-    E'  ->  +rE'| ε
-*/
-
 char l;
 
 void match(char c){
@@ -42,6 +32,6 @@ int main(){
     if(l=='$'){
         printf("Successfully parsed\n");
     }else{
-        printf("Unsuccessful parsing\n");
+        printf("Unsuccessful parsed\n");
     }
 }
