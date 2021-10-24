@@ -5,6 +5,6 @@
 ## Examples
 Input | Output
 ------|-------
-r+r$ | Successfully parsed
-chemistry | Unsuccessfully parsed
-r+r+r$ | Parsed Successfully
+`r+r$` | Successfully parsed
+`chemistry` | Unsuccessfully parsed
+`r+r+r$` | Parsed Successfully
