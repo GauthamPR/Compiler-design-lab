@@ -7,6 +7,16 @@
 char NTAdded[100];
 char firstOfNT[100][100];
 
+int nullInFirst(char NT){
+    for(int i=0; i<MAX_SIZE; i++){
+        if(NTAdded[i]==NT){
+            return i;
+        }else if(NTAdded[i]=='\0'){
+            return -1;
+        }
+    }
+}
+
 void mergeFirstTo(char NT, char symbol){
     int symIdx = -1, NTIdx = -1;
     for(int i=0; i<MAX_SIZE; i++){
@@ -19,6 +29,9 @@ void mergeFirstTo(char NT, char symbol){
     }
     
     for(int i=0; firstOfNT[symIdx][i] != '\0' || i<MAX_SIZE; i++){
+        if(firstOfNT[symIdx][i]=='\316'){
+            continue;
+        }
         for(int j=0; j<MAX_SIZE; j++){
             if(firstOfNT[NTIdx][j] == '\0' || firstOfNT[NTIdx][j]==firstOfNT[symIdx][i]){
                 firstOfNT[NTIdx][j] = firstOfNT[symIdx][i];
@@ -65,8 +78,16 @@ void first(char * prod){
             i+=1;
             if(flag==0){
                 if(prod[i]>='A' && prod[i]<='Z'){
-                    addNT(NT);
-                    mergeFirstTo(NT, prod[i]);
+                    i--;
+                    do{
+                        i++;
+                        addNT(NT);
+                        addNT(prod[i]);
+                        mergeFirstTo(NT, prod[i]);
+                    }while(nullInFirst(prod[i])!=-1 && i<MAX_SIZE);
+                    if(nullInFirst(prod[i]!=-1)){
+                        addToFirst(NT, '\316');
+                    }
                 }else{
                     flag = 1;
                     addToFirst(NT, prod[i]);
@@ -81,7 +102,7 @@ void printFirst(){
         if(NTAdded[i]=='\0'){
             break;
         }
-        printf("First of %c:\n", NTAdded[i]);
+        printf("\nFirst of %c:\n", NTAdded[i]);
         for(int j=0; j<MAX_SIZE; j++){
             if(firstOfNT[i][j]=='\0'){
                 break;
