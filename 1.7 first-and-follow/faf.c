@@ -7,32 +7,49 @@
 char NTAdded[100];
 char firstOfNT[100][100];
 
+void mergeFirstTo(char NT, char symbol){
+    int symIdx = -1, NTIdx = -1;
+    for(int i=0; i<MAX_SIZE; i++){
+        if(NTAdded[i]==symbol){
+            symIdx = i;
+        }
+        if(NTAdded[i]==NT){
+            NTIdx = i;
+        }
+    }
+    
+    for(int i=0; firstOfNT[symIdx][i] != '\0' || i<MAX_SIZE; i++){
+        for(int j=0; j<MAX_SIZE; j++){
+            if(firstOfNT[NTIdx][j] == '\0' || firstOfNT[NTIdx][j]==firstOfNT[symIdx][i]){
+                firstOfNT[NTIdx][j] = firstOfNT[symIdx][i];
+                break;
+            }
+        }
+    }
+}
 
-int findIdxOfAdded(char NT){
-    //Returns the index of NT if NT is in NTAdded else the next free space
+int addNT(char NT){
     for(int i=0; i<MAX_SIZE; i++){
         if(NTAdded[i]==NT){
             return i;
         }else if(NTAdded[i]=='\0'){
+            NTAdded[i] = NT;
             return i;
         }
     }
 }
 
-int findIdxToAdd(int idx, char symbol){
-    //Returns the index of next free space in first of NT
+void addToFirst(char NT, char symbol){
+    int idx = addNT(NT);
+    
+    NTAdded[idx] = NT;
+    int symIdx;
     for(int i=0; i<MAX_SIZE; i++){
         if(firstOfNT[idx][i] == '\0' || firstOfNT[idx][i]==symbol){
-            return i;
+            symIdx = i;
+            break;
         }
     }
-    printf("ERROR");
-}
-
-void addToFirst(char symbol, char NT){
-    int idx = findIdxOfAdded(NT);
-    NTAdded[idx] = NT;
-    int symIdx = findIdxToAdd(idx, symbol);
 
     firstOfNT[idx][symIdx] = symbol;
 }
@@ -48,11 +65,11 @@ void first(char * prod){
             i+=1;
             if(flag==0){
                 if(prod[i]>='A' && prod[i]<='Z'){
-                    //process symbol
+                    addNT(NT);
+                    mergeFirstTo(NT, prod[i]);
                 }else{
                     flag = 1;
-                    addToFirst(prod[i], NT);
-
+                    addToFirst(NT, prod[i]);
                 }
             }
         }
@@ -64,7 +81,7 @@ void printFirst(){
         if(NTAdded[i]=='\0'){
             break;
         }
-        printf("\nFirst of %c:\n", NTAdded[i]);
+        printf("First of %c:\n", NTAdded[i]);
         for(int j=0; j<MAX_SIZE; j++){
             if(firstOfNT[i][j]=='\0'){
                 break;
@@ -76,14 +93,14 @@ void printFirst(){
     }
 }
 
-void main(){
+
+void start(){
     int nOfProds;
     char prods[100][100];
     char temp;
 
     FILE *fptr = fopen("./input.txt", "r");
 
-    printf("Enter number of Productions: ");
     fscanf(fptr, "%d", &nOfProds);
     if(fptr == NULL){
         printf("Error!");
@@ -93,8 +110,12 @@ void main(){
         fscanf(fptr, "%c", &temp);
         fscanf(fptr, "%[^\n]", prods[i]);
         first(prods[i]);
-        printf("%s", prods[i]);
     }
+}
+
+void main(){
+    start();
+    start();
     
     printFirst();
     printf("\n------------------------------\n");
