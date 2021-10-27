@@ -19,6 +19,17 @@ int addNT(char NT){
     }
 }
 
+void addToFollowSymbol(char NT, char symbol){
+    int idx = addNT(NT);
+    int firstNTIdx = addNT(NT);
+    NTAdded[idx] = NT;
+    for(int i=0; i<MAX_SIZE; i++){
+        if(followOfNT[idx][i] != '\0'){
+            followOfNT[idx][i] = symbol;
+        }
+    }
+}
+
 void addToFollowFirstOf(char NT, char firstNT){
     int idx = addNT(NT);
     int firstNTIdx = addNT(NT);
@@ -101,7 +112,7 @@ void first(char * prod){
                         addNT(NT);
                         addNT(prod[i]);
                         mergeFirstTo(NT, prod[i]);
-                    }while(nullInFirst(prod[i])!=-1 && i<MAX_SIZE);
+                    }while(nullInFirst(prod[i])!=-1 && i<MAX_SIZE && prod[i]);
                     if(nullInFirst(prod[i]!=-1)){
                         addToFirst(NT, '\316');
                     }
@@ -135,15 +146,10 @@ void follow(char * prod){
                             addNT(prod[i]);
                             addToFollowFirstOf(prod[i], prod[i+1]);
                         }
+                    }else{
+                        addToFollowSymbol(prod[i], prod[i+1]);
                     }
                 }
-                mergeFirstTo(NT, prod[i]);
-                if(nullInFirst(prod[i]!=-1)){
-                    addToFirst(NT, '\316');
-                }
-            }else{
-                flag = 1;
-                addToFirst(NT, prod[i]);
             }
         }
     }
