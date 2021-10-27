@@ -127,19 +127,17 @@ void follow(char * prod){
         }
         if(flag==1){
             if(prod[i]>='A' && prod[i]<='Z'){
-                do{
-                    if(prod[i+1]=='\0'){
-                        //follow of prod[0]
-                    }else{
-                        if(prod[i+1]>='A' && prod[i+1]<='Z'){
-                            if(nullInFirst(prod[i+1])!=-1){
-                                addNT(prod[i]);
-                                addToFollowFirstOf(prod[i], prod[i+1]);
-                            }
+                if(prod[i+1]=='\0'){
+                    //follow of prod[0]
+                }else{
+                    if(prod[i+1]>='A' && prod[i+1]<='Z'){
+                        if(nullInFirst(prod[i+1])!=-1){
+                            addNT(prod[i]);
+                            addToFollowFirstOf(prod[i], prod[i+1]);
                         }
                     }
-                    mergeFirstTo(NT, prod[i]);
-                }while(nullInFirst(prod[i])!=-1 && i<MAX_SIZE);
+                }
+                mergeFirstTo(NT, prod[i]);
                 if(nullInFirst(prod[i]!=-1)){
                     addToFirst(NT, '\316');
                 }
@@ -199,12 +197,12 @@ void start(){
     }
 
     for(int i=0; i<nOfProds; i++){
-        if(i==1){
+        fscanf(fptr, "%c", &temp);
+        fscanf(fptr, "%[^\n]", prods[i]);
+        if(i==0){
             int idx = addNT(prods[0][0]);
             followOfNT[idx][0] = '$';
         }
-        fscanf(fptr, "%c", &temp);
-        fscanf(fptr, "%[^\n]", prods[i]);
         first(prods[i]);
         follow(prods[i]);
     }
