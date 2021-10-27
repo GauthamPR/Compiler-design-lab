@@ -4,8 +4,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char NTAdded[100];
-char firstOfNT[100][100];
+char NTAdded[MAX_SIZE];
+char firstOfNT[MAX_SIZE][MAX_SIZE];
+char followOfNT[MAX_SIZE][MAX_SIZE];
+
+int addNT(char NT){
+    for(int i=0; i<MAX_SIZE; i++){
+        if(NTAdded[i]==NT){
+            return i;
+        }else if(NTAdded[i]=='\0'){
+            NTAdded[i] = NT;
+            return i;
+        }
+    }
+}
+
+void addToFollowFirstOf(char NT, char firstNT){
+    int idx = addNT(NT);
+    int firstNTIdx = addNT(NT);
+    NTAdded[idx] = NT;
+    int j = 0;
+    for(int i=0; i<MAX_SIZE; i++){
+        if(followOfNT[idx][i] != '\0'){
+            if(firstOfNT[firstNTIdx][j]=='\0'){
+                break;
+            }
+            followOfNT[idx][i] = firstOfNT[firstNTIdx][j++];
+        }
+    }
+}
 
 int nullInFirst(char NT){
     for(int i=0; i<MAX_SIZE; i++){
@@ -41,16 +68,6 @@ void mergeFirstTo(char NT, char symbol){
     }
 }
 
-int addNT(char NT){
-    for(int i=0; i<MAX_SIZE; i++){
-        if(NTAdded[i]==NT){
-            return i;
-        }else if(NTAdded[i]=='\0'){
-            NTAdded[i] = NT;
-            return i;
-        }
-    }
-}
 
 void addToFirst(char NT, char symbol){
     int idx = addNT(NT);
@@ -70,7 +87,7 @@ void addToFirst(char NT, char symbol){
 void first(char * prod){
     char NT = prod[0];
     int flag = 0;
-    for(int i=0; i<100; i++){
+    for(int i=0; i<MAX_SIZE; i++){
         if(prod[i]=='\0'){
             break;
         }
@@ -97,6 +114,43 @@ void first(char * prod){
     }
 }
 
+void follow(char * prod){
+    char NT = prod[0];
+    addNT(NT);
+    int flag = 0;
+    for(int i=0; i<MAX_SIZE; i++){
+        if(prod[i]=='\0'){
+            break;
+        }
+        if(prod[i]=='='){
+            flag = 1;
+        }
+        if(flag==1){
+            if(prod[i]>='A' && prod[i]<='Z'){
+                do{
+                    if(prod[i+1]=='\0'){
+                        //follow of prod[0]
+                    }else{
+                        if(prod[i+1]>='A' && prod[i+1]<='Z'){
+                            if(nullInFirst(prod[i+1])!=-1){
+                                addNT(prod[i]);
+                                addToFollowFirstOf(prod[i], prod[i+1]);
+                            }
+                        }
+                    }
+                    mergeFirstTo(NT, prod[i]);
+                }while(nullInFirst(prod[i])!=-1 && i<MAX_SIZE);
+                if(nullInFirst(prod[i]!=-1)){
+                    addToFirst(NT, '\316');
+                }
+            }else{
+                flag = 1;
+                addToFirst(NT, prod[i]);
+            }
+        }
+    }
+}
+
 void printFirst(){
     for(int i=0; i<MAX_SIZE; i++){
         if(NTAdded[i]=='\0'){
@@ -114,10 +168,27 @@ void printFirst(){
     }
 }
 
+void printFollow(){
+    for(int i=0; i<MAX_SIZE; i++){
+        if(NTAdded[i]=='\0'){
+            break;
+        }
+        printf("\nFollow of %c:\n", NTAdded[i]);
+        for(int j=0; j<MAX_SIZE; j++){
+            if(followOfNT[i][j]=='\0'){
+                break;
+            }else if(followOfNT[i][j]=='\316'){
+                printf(" ε");
+            }else
+                printf(" %c", followOfNT[i][j]);
+        }
+    }
+}
+
 
 void start(){
     int nOfProds;
-    char prods[100][100];
+    char prods[MAX_SIZE][MAX_SIZE];
     char temp;
 
     FILE *fptr = fopen("./input.txt", "r");
@@ -128,9 +199,14 @@ void start(){
     }
 
     for(int i=0; i<nOfProds; i++){
+        if(i==1){
+            int idx = addNT(prods[0][0]);
+            followOfNT[idx][0] = '$';
+        }
         fscanf(fptr, "%c", &temp);
         fscanf(fptr, "%[^\n]", prods[i]);
         first(prods[i]);
+        follow(prods[i]);
     }
 }
 
@@ -139,5 +215,7 @@ void main(){
     start();
     
     printFirst();
+    printf("\n------------------------------\n");
+    printFollow();
     printf("\n------------------------------\n");
 }
