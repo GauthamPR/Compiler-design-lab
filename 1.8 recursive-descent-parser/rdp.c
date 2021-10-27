@@ -30,6 +30,7 @@ void E(){
 }
 
 int main(){
+    printf("Enter expression: ");
     l = getchar();
     E();
     if(l=='$'){
