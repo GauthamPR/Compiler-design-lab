@@ -8,6 +8,20 @@ char NTAdded[MAX_SIZE];
 char firstOfNT[MAX_SIZE][MAX_SIZE];
 char followOfNT[MAX_SIZE][MAX_SIZE];
 
+int addNT(char);
+void addToFollowSymbol(char, char);
+void addToFollowFirstOf(char, char);
+int nullInFirst(char);
+void mergeFirstTo(char, char);
+void mergeFollowTo(char, char);
+void addToFirst(char, char);
+void first(char *);
+void follow(char *);
+void printFirst();
+void printFollow();
+void startFirst();
+void startFollow();
+
 int addNT(char NT){
     for(int i=0; i<MAX_SIZE; i++){
         if(NTAdded[i]==NT){
@@ -30,29 +44,62 @@ void addToFollowSymbol(char NT, char symbol){
     }
 }
 
-void addToFollowFirstOf(char NT, char firstNT){
+void addToFollowFirstOf(char NT, char firstSymbol){
+    //NT is the symbol to whose follow, first(s) of firstSymbol(NT/T) is to be added
     int idx = addNT(NT);
-    int firstNTIdx = addNT(NT);
-    NTAdded[idx] = NT;
-    int j = 0;
-    for(int i=0; i<MAX_SIZE; i++){
-        if(followOfNT[idx][i] != '\0'){
-            if(firstOfNT[firstNTIdx][j]=='\0'){
+
+    int isNT = 0;
+
+    //check if firstSymbol is NT, try to add it to NT list only if it is not 
+    if(firstSymbol>='A' && firstSymbol<='Z'){
+        int firstNTIdx = addNT(firstSymbol);
+        int j = 0;
+        for(int i=0; i<MAX_SIZE; i++){
+            if(followOfNT[idx][i] == '\0'){
+                while(firstOfNT[firstNTIdx][j] == '\316'){
+                    j++;
+                }
+                if(firstOfNT[firstNTIdx][j]=='\0'){
+                    break;
+                }else{
+                    followOfNT[idx][i] = firstOfNT[firstNTIdx][j++];
+                }
+            }
+        }
+    }else{
+        //if not a NT add that symbol to follow of NT
+        int j = 0;
+        for(int i=0; i<MAX_SIZE; i++){
+            if(followOfNT[idx][i] == '\0'){
+                followOfNT[idx][i] = firstSymbol;
                 break;
             }
-            followOfNT[idx][i] = firstOfNT[firstNTIdx][j++];
         }
     }
 }
 
-int nullInFirst(char NT){
+int nullInFirst(char symbol){
+    /*
+        Used to check whether a symbol(NT/T) has null as its first
+        If yes returns the index else -1
+    */
+    int idx;
     for(int i=0; i<MAX_SIZE; i++){
-        if(NTAdded[i]==NT){
-            return i;
+        if(NTAdded[i]==symbol){
+            idx = i;
+            break;
         }else if(NTAdded[i]=='\0'){
             return -1;
         }
     }
+
+    for(int i=0; firstOfNT[idx][i]!='\0'; i++){
+        if(firstOfNT[idx][i]=='\316'){
+            return i;
+        }
+    }
+
+    return -1;
 }
 
 void mergeFirstTo(char NT, char symbol){
@@ -73,6 +120,32 @@ void mergeFirstTo(char NT, char symbol){
         for(int j=0; j<MAX_SIZE; j++){
             if(firstOfNT[NTIdx][j] == '\0' || firstOfNT[NTIdx][j]==firstOfNT[symIdx][i]){
                 firstOfNT[NTIdx][j] = firstOfNT[symIdx][i];
+                break;
+            }
+        }
+    }
+}
+
+void mergeFollowTo(char NT, char symbol){
+    int symIdx = -1, NTIdx = -1;
+    for(int i=0; i<MAX_SIZE; i++){
+        if(NTAdded[i]==symbol){
+            symIdx = i;
+        }
+        if(NTAdded[i]==NT){
+            NTIdx = i;
+        }
+    }
+    
+    for(int i=0; followOfNT[symIdx][i] != '\0' || i<MAX_SIZE; i++){
+        if(followOfNT[symIdx][i]=='\316'){
+            continue;
+        }else if(followOfNT[symIdx][i] == '\0'){
+            break;
+        }
+        for(int j=0; j<MAX_SIZE; j++){
+            if(followOfNT[NTIdx][j] == '\0' || followOfNT[NTIdx][j]==followOfNT[symIdx][i]){
+                followOfNT[NTIdx][j] = followOfNT[symIdx][i];
                 break;
             }
         }
@@ -133,24 +206,31 @@ void follow(char * prod){
         if(prod[i]=='\0'){
             break;
         }
-        if(prod[i]=='='){
-            flag = 1;
-        }
         if(flag==1){
             if(prod[i]>='A' && prod[i]<='Z'){
                 if(prod[i+1]=='\0'){
-                    //follow of prod[0]
+                    addNT(prod[i]);
+                    mergeFollowTo(prod[i], prod[0]);
                 }else{
-                    if(prod[i+1]>='A' && prod[i+1]<='Z'){
-                        if(nullInFirst(prod[i+1])!=-1){
+                    //Add follow of next j symbols until ε not in First(prod[i+j])
+                    for(int j=1; j<MAX_SIZE; j++){
+                        addNT(prod[i]);
+                        addToFollowFirstOf(prod[i], prod[i+j]);
+                        if(prod[i+j]=='\0'){
                             addNT(prod[i]);
-                            addToFollowFirstOf(prod[i], prod[i+1]);
+                            mergeFollowTo(prod[i], prod[0]);
+                            break;
                         }
-                    }else{
-                        addToFollowSymbol(prod[i], prod[i+1]);
+                        if(nullInFirst(prod[i+j])==-1){
+                            break;
+                        }
                     }
                 }
             }
+        }
+
+        if(prod[i]=='='){
+            flag = 1;
         }
     }
 }
@@ -190,7 +270,7 @@ void printFollow(){
 }
 
 
-void start(){
+void startFirst(){
     int nOfProds;
     char prods[MAX_SIZE][MAX_SIZE];
     char temp;
@@ -210,13 +290,36 @@ void start(){
             followOfNT[idx][0] = '$';
         }
         first(prods[i]);
+    }
+}
+
+void startFollow(){
+    int nOfProds;
+    char prods[MAX_SIZE][MAX_SIZE];
+    char temp;
+
+    FILE *fptr = fopen("./input.txt", "r");
+
+    fscanf(fptr, "%d", &nOfProds);
+    if(fptr == NULL){
+        printf("Error!");
+    }
+
+    for(int i=0; i<nOfProds; i++){
+        fscanf(fptr, "%c", &temp);
+        fscanf(fptr, "%[^\n]", prods[i]);
+        if(i==0){
+            int idx = addNT(prods[0][0]);
+            followOfNT[idx][0] = '$';
+        }
         follow(prods[i]);
     }
 }
 
 void main(){
-    start();
-    start();
+    startFirst();
+    startFirst();
+    startFollow();
     
     printFirst();
     printf("\n------------------------------\n");
