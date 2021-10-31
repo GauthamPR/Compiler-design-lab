@@ -1,5 +1,7 @@
 # First and Follow
 
+## Example 1
+
 #### Input (*input.txt*)
 ```
 9
@@ -41,4 +43,35 @@ Follow of E:
  f h
 Follow of F:
  h
+------------------------------
+ ```
+
+## Example 2
+
+#### Input (*input.txt*)
+```
+5
+S=(L)
+S=a
+L=SE
+E=,SE
+E=ε
+```
+#### Output (*stdout*)
+```
+First of S:
+ ( a
+First of L:
+ ( a ε
+First of E:
+ , ε
+------------------------------
+
+Follow of S:
+ $ , )
+Follow of L:
+ )
+Follow of E:
+ )
+------------------------------
  ```
