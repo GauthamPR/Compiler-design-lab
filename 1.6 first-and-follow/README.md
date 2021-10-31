@@ -1,5 +1,6 @@
 # First and Follow
-## Input
+
+#### Input (*input.txt*)
 ```
 9
 S=aBDh
@@ -12,7 +13,7 @@ E=ε
 F=f
 F=ε
 ```
-## Output
+#### Output (*stdout*)
 ```
 First of S:
  a
