@@ -53,16 +53,18 @@ void addToFollowFirstOf(char NT, char firstSymbol){
     //check if firstSymbol is NT, try to add it to NT list only if it is not 
     if(firstSymbol>='A' && firstSymbol<='Z'){
         int firstNTIdx = addNT(firstSymbol);
-        int j = 0;
         for(int i=0; i<MAX_SIZE; i++){
-            if(followOfNT[idx][i] == '\0'){
-                while(firstOfNT[firstNTIdx][j] == '\316'){
-                    j++;
-                }
-                if(firstOfNT[firstNTIdx][j]=='\0'){
-                    break;
-                }else{
-                    followOfNT[idx][i] = firstOfNT[firstNTIdx][j++];
+            if(firstOfNT[firstNTIdx][i] == '\316'){
+                continue;
+            }
+            if(firstOfNT[firstNTIdx][i]=='\0'){
+                break;
+            }else{
+                for(int j=0; j<MAX_SIZE; j++){
+                    if(followOfNT[idx][j] == '\0' || followOfNT[idx][j]==firstOfNT[firstNTIdx][i]){
+                        followOfNT[idx][j] = firstOfNT[firstNTIdx][i];
+                        break;
+                    }
                 }
             }
         }
