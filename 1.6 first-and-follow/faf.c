@@ -222,7 +222,7 @@ void first(char * prod){
                         addNT(NT);
                         addNT(prod[i]);
                         mergeFirstTo(NT, prod[i]);
-                    }while(nullInFirst(prod[i])!=-1 && i<MAX_SIZE && prod[i]);
+                    }while(nullInFirst(prod[i])!=-1 && i<MAX_SIZE && (prod[i]<='A'&&prod[i]<='Z'));
                     if(nullInFirst(prod[i]!=-1)){
                         addToFirstSymbol(NT, '\316');
                     }
