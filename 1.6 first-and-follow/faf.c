@@ -23,8 +23,8 @@ void first(char *);
 void follow(char *);
 void printFirst();
 void printFollow();
-void startFirst();
-void startFollow();
+void firstFeeder();
+void followFeeder();
 
 int addNT(char NT){
     for(int i=0; i<MAX_SIZE; i++){
@@ -44,8 +44,8 @@ void addToFollowSymbol(char NT, char symbol){
     for(int i=0; i<MAX_SIZE; i++){
         if(followOfNT[idx][i] != '\0'){
             followOfNT[idx][i] = symbol;
-            startFirst();
-            startFollow();
+            firstFeeder();
+            followFeeder();
         }
     }
 }
@@ -94,8 +94,8 @@ void addToFollowFirstOf(char NT, char firstSymbol){
         }
     }
     if(callFaf==1){
-        startFirst();
-        startFollow();
+        firstFeeder();
+        followFeeder();
     }
 }
 
@@ -150,8 +150,8 @@ void mergeFirstTo(char NT, char symbol){
         }
     }
     if(callFaf==1){
-        startFirst();
-        startFollow();
+        firstFeeder();
+        followFeeder();
     }
 }
 
@@ -184,8 +184,8 @@ void mergeFollowTo(char NT, char symbol){
         }
     }
     if(callFaf == 1){
-        startFirst();
-        startFollow();
+        firstFeeder();
+        followFeeder();
     }
 }
 
@@ -307,7 +307,7 @@ void printFollow(){
 }
 
 
-void startFirst(){
+void firstFeeder(){
 
     for(int i=0; i<nOfProds; i++){
         if(i==0){
@@ -318,7 +318,7 @@ void startFirst(){
     }
 }
 
-void startFollow(){
+void followFeeder(){
 
     for(int i=0; i<nOfProds; i++){
         if(i==0){
@@ -348,8 +348,8 @@ void readProds(){
 void main(){
 
     readProds();
-    startFirst();
-    startFollow();
+    firstFeeder();
+    followFeeder();
     
     printFirst();
     printf("\n------------------------------\n");
