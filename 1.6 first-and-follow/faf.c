@@ -4,17 +4,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int nOfProds;
+char prods[MAX_SIZE][MAX_SIZE];
+
 char NTAdded[MAX_SIZE];
 char firstOfNT[MAX_SIZE][MAX_SIZE];
 char followOfNT[MAX_SIZE][MAX_SIZE];
 
+void readProds();
 int addNT(char);
 void addToFollowSymbol(char, char);
 void addToFollowFirstOf(char, char);
 int nullInFirst(char);
 void mergeFirstTo(char, char);
 void mergeFollowTo(char, char);
-void addToFirst(char, char);
+void addToFirstSymbol(char, char);
 void first(char *);
 void follow(char *);
 void printFirst();
@@ -40,6 +44,7 @@ void addToFollowSymbol(char NT, char symbol){
     for(int i=0; i<MAX_SIZE; i++){
         if(followOfNT[idx][i] != '\0'){
             followOfNT[idx][i] = symbol;
+            startFirst();
         }
     }
 }
@@ -49,6 +54,7 @@ void addToFollowFirstOf(char NT, char firstSymbol){
     int idx = addNT(NT);
 
     int isNT = 0;
+    int callFirst = 0;
 
     //check if firstSymbol is NT, try to add it to NT list only if it is not 
     if(firstSymbol>='A' && firstSymbol<='Z'){
@@ -63,6 +69,7 @@ void addToFollowFirstOf(char NT, char firstSymbol){
                 for(int j=0; j<MAX_SIZE; j++){
                     if(followOfNT[idx][j] == '\0' || followOfNT[idx][j]==firstOfNT[firstNTIdx][i]){
                         followOfNT[idx][j] = firstOfNT[firstNTIdx][i];
+                        callFirst = 1;
                         break;
                     }
                 }
@@ -74,9 +81,13 @@ void addToFollowFirstOf(char NT, char firstSymbol){
         for(int i=0; i<MAX_SIZE; i++){
             if(followOfNT[idx][i] == '\0'){
                 followOfNT[idx][i] = firstSymbol;
+                callFirst = 1;
                 break;
             }
         }
+    }
+    if(callFirst==1){
+        startFirst();
     }
 }
 
@@ -105,7 +116,7 @@ int nullInFirst(char symbol){
 }
 
 void mergeFirstTo(char NT, char symbol){
-    int symIdx = -1, NTIdx = -1;
+    int symIdx = -1, NTIdx = -1, callFirst=0;
     for(int i=0; i<MAX_SIZE; i++){
         if(NTAdded[i]==symbol){
             symIdx = i;
@@ -120,11 +131,18 @@ void mergeFirstTo(char NT, char symbol){
             continue;
         }
         for(int j=0; j<MAX_SIZE; j++){
-            if(firstOfNT[NTIdx][j] == '\0' || firstOfNT[NTIdx][j]==firstOfNT[symIdx][i]){
+            if(firstOfNT[NTIdx][j]==firstOfNT[symIdx][i]){
+                break;
+            }
+            else if(firstOfNT[NTIdx][j] == '\0'){
                 firstOfNT[NTIdx][j] = firstOfNT[symIdx][i];
+                callFirst = 1;
                 break;
             }
         }
+    }
+    if(callFirst==1){
+        startFirst();
     }
 }
 
@@ -148,6 +166,7 @@ void mergeFollowTo(char NT, char symbol){
         for(int j=0; j<MAX_SIZE; j++){
             if(followOfNT[NTIdx][j] == '\0' || followOfNT[NTIdx][j]==followOfNT[symIdx][i]){
                 followOfNT[NTIdx][j] = followOfNT[symIdx][i];
+                startFirst();
                 break;
             }
         }
@@ -155,7 +174,7 @@ void mergeFollowTo(char NT, char symbol){
 }
 
 
-void addToFirst(char NT, char symbol){
+void addToFirstSymbol(char NT, char symbol){
     int idx = addNT(NT);
     
     NTAdded[idx] = NT;
@@ -189,11 +208,11 @@ void first(char * prod){
                         mergeFirstTo(NT, prod[i]);
                     }while(nullInFirst(prod[i])!=-1 && i<MAX_SIZE && prod[i]);
                     if(nullInFirst(prod[i]!=-1)){
-                        addToFirst(NT, '\316');
+                        addToFirstSymbol(NT, '\316');
                     }
                 }else{
                     flag = 1;
-                    addToFirst(NT, prod[i]);
+                    addToFirstSymbol(NT, prod[i]);
                 }
             }
         }
@@ -273,20 +292,8 @@ void printFollow(){
 
 
 void startFirst(){
-    int nOfProds;
-    char prods[MAX_SIZE][MAX_SIZE];
-    char temp;
-
-    FILE *fptr = fopen("./input.txt", "r");
-
-    fscanf(fptr, "%d", &nOfProds);
-    if(fptr == NULL){
-        printf("Error!");
-    }
 
     for(int i=0; i<nOfProds; i++){
-        fscanf(fptr, "%c", &temp);
-        fscanf(fptr, "%[^\n]", prods[i]);
         if(i==0){
             int idx = addNT(prods[0][0]);
             followOfNT[idx][0] = '$';
@@ -296,8 +303,17 @@ void startFirst(){
 }
 
 void startFollow(){
-    int nOfProds;
-    char prods[MAX_SIZE][MAX_SIZE];
+
+    for(int i=0; i<nOfProds; i++){
+        if(i==0){
+            int idx = addNT(prods[0][0]);
+            followOfNT[idx][0] = '$';
+        }
+        follow(prods[i]);
+    }
+}
+
+void readProds(){
     char temp;
 
     FILE *fptr = fopen("./input.txt", "r");
@@ -310,16 +326,12 @@ void startFollow(){
     for(int i=0; i<nOfProds; i++){
         fscanf(fptr, "%c", &temp);
         fscanf(fptr, "%[^\n]", prods[i]);
-        if(i==0){
-            int idx = addNT(prods[0][0]);
-            followOfNT[idx][0] = '$';
-        }
-        follow(prods[i]);
     }
 }
 
 void main(){
-    startFirst();
+
+    readProds();
     startFirst();
     startFollow();
     
