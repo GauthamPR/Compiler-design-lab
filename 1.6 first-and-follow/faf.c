@@ -45,6 +45,7 @@ void addToFollowSymbol(char NT, char symbol){
         if(followOfNT[idx][i] != '\0'){
             followOfNT[idx][i] = symbol;
             startFirst();
+            startFollow();
         }
     }
 }
@@ -54,7 +55,7 @@ void addToFollowFirstOf(char NT, char firstSymbol){
     int idx = addNT(NT);
 
     int isNT = 0;
-    int callFirst = 0;
+    int callFaf = 0;
 
     //check if firstSymbol is NT, try to add it to NT list only if it is not 
     if(firstSymbol>='A' && firstSymbol<='Z'){
@@ -67,9 +68,12 @@ void addToFollowFirstOf(char NT, char firstSymbol){
                 break;
             }else{
                 for(int j=0; j<MAX_SIZE; j++){
-                    if(followOfNT[idx][j] == '\0' || followOfNT[idx][j]==firstOfNT[firstNTIdx][i]){
+                    if(followOfNT[idx][j]==firstOfNT[firstNTIdx][i]){
+                        break;
+                    }
+                    else if(followOfNT[idx][j] == '\0'){
                         followOfNT[idx][j] = firstOfNT[firstNTIdx][i];
-                        callFirst = 1;
+                        callFaf = 1;
                         break;
                     }
                 }
@@ -79,15 +83,19 @@ void addToFollowFirstOf(char NT, char firstSymbol){
         //if not a NT add that symbol to follow of NT
         int j = 0;
         for(int i=0; i<MAX_SIZE; i++){
-            if(followOfNT[idx][i] == '\0'){
+            if(followOfNT[idx][i]==firstSymbol){
+                break;
+            }
+            else if(followOfNT[idx][i] == '\0'){
                 followOfNT[idx][i] = firstSymbol;
-                callFirst = 1;
+                callFaf = 1;
                 break;
             }
         }
     }
-    if(callFirst==1){
+    if(callFaf==1){
         startFirst();
+        startFollow();
     }
 }
 
@@ -116,7 +124,7 @@ int nullInFirst(char symbol){
 }
 
 void mergeFirstTo(char NT, char symbol){
-    int symIdx = -1, NTIdx = -1, callFirst=0;
+    int symIdx = -1, NTIdx = -1, callFaf=0;
     for(int i=0; i<MAX_SIZE; i++){
         if(NTAdded[i]==symbol){
             symIdx = i;
@@ -136,18 +144,19 @@ void mergeFirstTo(char NT, char symbol){
             }
             else if(firstOfNT[NTIdx][j] == '\0'){
                 firstOfNT[NTIdx][j] = firstOfNT[symIdx][i];
-                callFirst = 1;
+                callFaf = 1;
                 break;
             }
         }
     }
-    if(callFirst==1){
+    if(callFaf==1){
         startFirst();
+        startFollow();
     }
 }
 
 void mergeFollowTo(char NT, char symbol){
-    int symIdx = -1, NTIdx = -1;
+    int symIdx = -1, NTIdx = -1, callFaf = 0;
     for(int i=0; i<MAX_SIZE; i++){
         if(NTAdded[i]==symbol){
             symIdx = i;
@@ -164,12 +173,19 @@ void mergeFollowTo(char NT, char symbol){
             break;
         }
         for(int j=0; j<MAX_SIZE; j++){
-            if(followOfNT[NTIdx][j] == '\0' || followOfNT[NTIdx][j]==followOfNT[symIdx][i]){
+            if(followOfNT[NTIdx][j]==followOfNT[symIdx][i]){
+                break;
+            }
+            else if(followOfNT[NTIdx][j] == '\0'){
                 followOfNT[NTIdx][j] = followOfNT[symIdx][i];
-                startFirst();
+                callFaf = 1;
                 break;
             }
         }
+    }
+    if(callFaf == 1){
+        startFirst();
+        startFollow();
     }
 }
 
