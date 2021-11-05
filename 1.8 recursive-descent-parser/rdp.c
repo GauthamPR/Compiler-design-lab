@@ -1,6 +1,7 @@
 //Recursive Descent Parser
 
 #include <stdio.h>
+#include <stdlib.h>
 
 char l;
 
@@ -8,7 +9,8 @@ void match(char c){
     if(l == c){
         l = getchar();
     }else{
-        printf("error");
+        printf("Unsuccessfully parsed");
+        exit(1);
     }
 }
 
