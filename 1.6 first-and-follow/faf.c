@@ -192,17 +192,25 @@ void mergeFollowTo(char NT, char symbol){
 
 void addToFirstSymbol(char NT, char symbol){
     int idx = addNT(NT);
+    int callFaf=0;
     
     NTAdded[idx] = NT;
-    int symIdx;
     for(int i=0; i<MAX_SIZE; i++){
-        if(firstOfNT[idx][i] == '\0' || firstOfNT[idx][i]==symbol){
-            symIdx = i;
+        if(firstOfNT[idx][i]==symbol){
+            break;
+        }
+        if(firstOfNT[idx][i] == '\0'){
+            callFaf = 1;
+            firstOfNT[idx][i] = symbol;
             break;
         }
     }
 
-    firstOfNT[idx][symIdx] = symbol;
+
+    if(callFaf == 1){
+        firstFeeder();
+        followFeeder();
+    }
 }
 
 void first(char * prod){
@@ -219,11 +227,17 @@ void first(char * prod){
                     i--;
                     do{
                         i++;
-                        addNT(NT);
-                        addNT(prod[i]);
-                        mergeFirstTo(NT, prod[i]);
-                    }while(nullInFirst(prod[i])!=-1 && i<MAX_SIZE && (prod[i]<='A'&&prod[i]<='Z'));
-                    if(nullInFirst(prod[i]!=-1)){
+                        if(prod[i]>='A'&&prod[i]<='Z'){
+                            addNT(NT);
+                            addNT(prod[i]);
+                            mergeFirstTo(NT, prod[i]);
+                        }else{
+                            addToFirstSymbol(NT, prod[i]);
+                            break;        
+                        }
+
+                    }while(nullInFirst(prod[i])!=-1 && i<MAX_SIZE && (prod[i]>='A'&&prod[i]<='Z'));
+                    if(nullInFirst(prod[i]!=-1) && (prod[i]>='A'&&prod[i]<='Z')){
                         addToFirstSymbol(NT, '\316');
                     }
                 }else{
