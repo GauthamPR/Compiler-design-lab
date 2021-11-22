@@ -1,7 +1,7 @@
 # Compiler-design-lab
 
 ## Cycle 1
-1.  Implementation of Lexical Analyzer for C using Lex Tool
+1.  [Implementation of Lexical Analyzer for C using Lex Tool](/1.1%20lex-analyzer)
 2.  Generate YACC specification for a few syntactic categories
     - Program to recognize a valid arithmetic expression that uses operator +, – , * and/.
     - Implementation of Calculator using LEX and YACC

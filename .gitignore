@@ -1,3 +1,5 @@
 .vscode
 *.out
 input.txt
+sample.c
+lex.yy.c
