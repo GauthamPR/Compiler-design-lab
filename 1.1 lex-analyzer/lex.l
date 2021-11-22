@@ -9,7 +9,7 @@
 %}
 
 Keyword             auto|double|int|struct|break|else|long|switch|case|enum|register|typedef|char|extern|return|union|const|float|short|unsigned|continue|for|signed|void|default|goto|sizeof|volatile|do|if|static|while
-Literal             (\".*\")|(\'[A-z]*\')|[0-9]*
+Literal             (\"[^\']*\")|(\'[^\']*\')|[0-9]*
 Identifier          [A-z]([A-z]|_|[0-9])*
 AssignmentOperator  =|\+=|\-=|\/=|%=
 ArithmeticOperator  \+|\-|\/|\*
