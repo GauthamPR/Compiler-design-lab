@@ -1,5 +1,5 @@
 # First and Follow
-
+**input.txt**: Contains input (*saved in the same directory as the program*)
 ## Example 1
 
 #### Input (*input.txt*)
