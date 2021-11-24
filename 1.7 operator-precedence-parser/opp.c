@@ -105,16 +105,17 @@ void parse(){
         precedence = findPrecedence(stack[top], queue[front]);
         
         if(precedence == '>'){
-            printf("Reduce\n");
+            printf("\t\tReduce\n");
             findAndReduceHandles();
         }else{
-            printf("Shift\n");
+            printf("\t\tShift\n");
             top++;
             stack[top++] = precedence;
             stack[top]=queue[front++];
         }
     }
 
+    printStackAndQ();
     printf("\t\tString Accepted\n");
 }
 
@@ -128,5 +129,6 @@ void main(){
     printf("\n");
 
     printf("Stack\t\tInput\t\tOperation\n");
+    printf("-----------------------------------------\n");
     parse();
 }
