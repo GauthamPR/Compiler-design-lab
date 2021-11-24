@@ -1,7 +1,7 @@
 //Operator precedence parser
 
 #define MAX_SIZE 100
-#define EMPTY '0'
+#define EMPTY '\000'
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,13 +9,18 @@
 
 //The operator precedence table
 char opPredTable[5][5] = {
-    //           i       +       x       $      E
-    /* i */{    ' ',    '>',    '>',    '>',    '<'},
-    /* + */{    '<',    '>',    '<',    '>',    '<'},
-    /* x */{    '<',    '>',    '>',    '>',    '<'},
-    /* $ */{    '<',    '<',    '<',    ' ',    '<'},
-    /* E */{    '<',    '<',    '<',    '>',    ' '}
+    //           i       +       x       $
+    /* i */{    ' ',    '>',    '>',    '>'},
+    /* + */{    '<',    '>',    '<',    '>'},
+    /* x */{    '<',    '>',    '>',    '>'},
+    /* $ */{    '<',    '<',    '<',    ' '}
 };
+
+char stack[MAX_SIZE];
+int top = 0;
+
+char queue[MAX_SIZE];
+int front = 0;
 
 //returns the index of symbol in operator precedence table
 char indexOf(char symbol){
@@ -24,73 +29,54 @@ char indexOf(char symbol){
         case '+': return 1;
         case 'x': return 2;
         case '$': return 3;
-        case 'E': return 4;
     }
 }
 
-//reduce handle with Non-Terminal
-char * reduce(char * expr, int start, int end, char NT){
-    char* finalExpr = malloc(MAX_SIZE + 1);
+//reduce handle
+void reduce(int start, int end){
+    char tempStack[MAX_SIZE];
     int j = 0;
 
-    for(int i=0; expr[i]!='\0'; i++){
+    for(int i=0; stack[i]!='\0'; i++){
         if(i<start || i>end){
-            finalExpr[j++] = expr[i];
+            tempStack[j++] = stack[i];
         }
         if(i==end-1){
-            if(NT != EMPTY)
-                finalExpr[j++] = NT;
+            tempStack[j++] = EMPTY;
         }
     }
 
-    return finalExpr;
+    strcpy(stack, tempStack);
+    top = strlen(stack)-1;
 }
 
 //finds and reduces handles 
-char * findAndReduceHandles(char *expr){
+void findAndReduceHandles(){
     char handle[MAX_SIZE];
-    int end, start, flag=0;
+    int end = top, start;
     
-    //find end and start of handle
-    for(int i=0; expr[i]!='\0'; i++){
-        if(expr[i]=='>'){
-            end = i;
-            flag++;
-            break;
-        }
-    }
-    for(int i=end; expr[i]!='$'; i--){
-        if(expr[i]=='<'){
+    for(int i=end; stack[i]!='$'; i--){
+        if(stack[i]=='<'){
             start = i;
-            flag++;
             break;
         }
-    }
-
-    if(flag != 2){
-        return expr;
     }
 
     //copy handle
-    strncpy(handle, expr + start, (end+1) - start);
+    strncpy(handle, stack + start, (end+1) - start);
     handle[(end+1)-start] = '\0';
 
-    if(strcmp("<i>", handle)==0){
-        expr = reduce(expr, start, end, 'E');
+    //if production exist reduce handle
+    if(strcmp("<i", handle)==0){
+        reduce(start, end);
     }
-    else if(strcmp("<E>", handle)==0){
-        expr = reduce(expr, start, end, EMPTY);
+    else if(strcmp("<+", handle)==0){
+        reduce(start, end);
     }
-    else if(strcmp("<+>", handle)==0){
-        expr = reduce(expr, start, end, EMPTY);
-    }
-    else if(strcmp("<x>", handle)==0){
-        expr = reduce(expr, start, end, EMPTY);
+    else if(strcmp("<x", handle)==0){
+        reduce(start, end);
     }
 
-    printf("%s\n", expr);
-    
-    return expr;
 }
 
 //returns the precedence between two symbols
@@ -102,66 +88,45 @@ char findPrecedence(char symbol, char lookAhead){
     return opPredTable[symIdx][lookAheadIdx];
 }
 
-//checks the whether the symbol is from expression or precedence
-int isPrecedence(char symbol){
-    if(symbol == '>' || symbol == '<' || symbol == '='){
-        return 1;
+void printStackAndQ(){
+    printf("%s\t\t", stack);
+    for(int i=front; i<strlen(queue); i++){
+        printf("%c", queue[i]);
     }
-
-    return 0;
 }
 
-//returns an expression with precedence characters inserted
-char * insertPrecedence(char * expr){
-    char *exprWithPrecedence = malloc(MAX_SIZE + 1);
-    int j=0;
+void parse(){
+    char precedence;
 
-    for(int i=0; expr[i]!='\0'; i++){
-        exprWithPrecedence[j++] = expr[i++];
+    while(!(stack[top]=='$' && queue[front]=='$')){
         
-        //if last symbol
-        if(i>0 && expr[i] == '$'){
-            break;
-        }
+        printStackAndQ();
 
-        //if precedence already calculated copy/skip else calculate and copy precedence
-        if(isPrecedence(expr[i])==1){
-            exprWithPrecedence[j++] = expr[i];
+        precedence = findPrecedence(stack[top], queue[front]);
+        
+        if(precedence == '>'){
+            printf("Reduce\n");
+            findAndReduceHandles();
         }else{
-            exprWithPrecedence[j++] = findPrecedence(expr[i-1], expr[i]);
+            printf("Shift\n");
+            top++;
+            stack[top++] = precedence;
+            stack[top]=queue[front++];
         }
     }
 
-    return exprWithPrecedence;
-}
-
-void parse(char * expr){
-    int flag = 0, length;
-
-    expr = insertPrecedence(expr);
-    while(1){
-        if(flag==2){
-            break;
-        }
-        
-        length = strlen(expr);
-        expr = findAndReduceHandles(expr);
-
-        if(strlen(expr)==length){
-            flag++;
-            expr = insertPrecedence(expr);
-        }else{
-            flag = 0;
-        }
-    }
+    printf("\t\tString Accepted\n");
 }
 
 void main(){
     char expr[MAX_SIZE];
 
+    stack[0] = '$';
+
     printf("Enter expression: ");
-    scanf("%s", expr);
+    scanf("%s", queue);
     printf("\n");
 
-    parse(expr);
+    printf("Stack\t\tInput\t\tOperation\n");
+    parse();
 }

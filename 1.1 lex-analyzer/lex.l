@@ -34,6 +34,7 @@ int yywrap(){}
 
 int main(){
     yylex();
+    
     int total = 0;
     printf("---------------------------------------------------------");
     printf("\nNumber of Keywords:\t\t\t %d\n", keywordCount);
