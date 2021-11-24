@@ -9,7 +9,7 @@
 **x**|<|>|>|>
 **$**|<|<|<|
 ## Example 1
-#### Input (*input.txt*)
+#### Input (*stdin*)
 ```i+ixi$```
 #### Output (*stdout*)
 ```
