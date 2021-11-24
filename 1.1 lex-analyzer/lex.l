@@ -15,7 +15,7 @@ AssignmentOperator  =|\+=|\-=|\/=|%=
 ArithmeticOperator  \+|\-|\/|\*
 RelationalOperator  ==|!=|<=|>=|<|>
 LogicalOperator     &&|\|\||!
-Comment             (\/\/.*)|(\/\*(.|\n)*\*\/)
+Comment             (\/\/.*)|(\/\*([^\*\/])*\*\/)
 
 %%
 {Keyword}               {printf("Keyword:\t\t\t\t %s\n", yytext); keywordCount++;};
