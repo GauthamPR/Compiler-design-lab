@@ -10,7 +10,7 @@
 **$**|<|<|<|
 ## Example 1
 #### Input (*stdin*)
-```i+ixi$```
+```i+ixi```
 #### Output (*stdout*)
 ```
 Stack           Input           Operation
@@ -26,4 +26,30 @@ $<+<x<i         $               Reduce
 $<+<x           $               Reduce
 $<+             $               Reduce
 $               $               String Accepted
+```
+## Example 2
+#### Input (*stdin*)
+```i=ixi```
+#### Output (*stdout*)
+```
+Stack           Input           Operation
+-----------------------------------------
+$               i+i=i$          Shift
+$<i             +i=i$           Reduce
+$               +i=i$           Shift
+$<+             i=i$            Shift
+$<+<i           =i$             Symbol not found
+```
+## Example 3
+#### Input (*stdin*)
+```i+ii```
+#### Output (*stdout*)
+```
+Stack           Input           Operation
+-----------------------------------------
+$               i+ii$           Shift
+$<i             +ii$            Reduce
+$               +ii$            Shift
+$<+             ii$             Shift
+$<+<i           i$              Rejected
 ```

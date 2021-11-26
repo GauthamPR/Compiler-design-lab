@@ -29,6 +29,8 @@ char indexOf(char symbol){
         case '+': return 1;
         case 'x': return 2;
         case '$': return 3;
+        default: printf("\t\tSymbol not found\n");
+            exit(0);
     }
 }
 
@@ -64,17 +66,22 @@ void findAndReduceHandles(){
 
     //copy handle
     strncpy(handle, stack + start, (end+1) - start);
+    char something[10] = {'>', '\0'};
     handle[(end+1)-start] = '\0';
+    strcat(handle, something);
 
     //if production exist reduce handle
-    if(strcmp("<i", handle)==0){
+    if(strcmp("<i>", handle)==0){
         reduce(start, end);
     }
-    else if(strcmp("<+", handle)==0){
+    else if(strcmp("<+>", handle)==0){
         reduce(start, end);
     }
-    else if(strcmp("<x", handle)==0){
+    else if(strcmp("<x>", handle)==0){
         reduce(start, end);
+    }else{
+        printf("\nProduction not found\n");
+        exit(0);
     }
 
 }
@@ -84,6 +91,10 @@ char findPrecedence(char symbol, char lookAhead){
     int symIdx, lookAheadIdx;
     symIdx = indexOf(symbol);
     lookAheadIdx = indexOf(lookAhead);
+    if(opPredTable[symIdx][lookAheadIdx] == ' '){
+        printf("\t\tRejected\n");
+        exit(0);
+    }
 
     return opPredTable[symIdx][lookAheadIdx];
 }
@@ -120,12 +131,11 @@ void parse(){
 }
 
 void main(){
-    char expr[MAX_SIZE];
-
     stack[0] = '$';
 
     printf("Enter expression: ");
     scanf("%s", queue);
+    queue[strlen(queue)] = '$';
     printf("\n");
 
     printf("Stack\t\tInput\t\tOperation\n");
