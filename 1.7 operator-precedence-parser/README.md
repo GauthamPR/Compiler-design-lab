@@ -9,7 +9,7 @@
 **x**|<|>|>|>
 **$**|<|<|<|
 ## Examples
-### 1. Accepting
+### 1. Acceptance
 #### Input (*stdin*)
 ```i+ixi```
 #### Output (*stdout*)
