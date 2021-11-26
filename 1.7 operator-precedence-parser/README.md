@@ -8,7 +8,8 @@
 **+**|<|>|<|>
 **x**|<|>|>|>
 **$**|<|<|<|
-## Example 1
+## Examples
+### 1. Accepting
 #### Input (*stdin*)
 ```i+ixi```
 #### Output (*stdout*)
@@ -27,7 +28,7 @@ $<+<x           $               Reduce
 $<+             $               Reduce
 $               $               String Accepted
 ```
-## Example 2
+### 2. Invalid symbol(*Rejection*)
 #### Input (*stdin*)
 ```i=ixi```
 #### Output (*stdout*)
@@ -40,7 +41,7 @@ $               +i=i$           Shift
 $<+             i=i$            Shift
 $<+<i           =i$             Symbol not found
 ```
-## Example 3
+### 3. Invalid grammar(*Rejection*)
 #### Input (*stdin*)
 ```i+ii```
 #### Output (*stdout*)
