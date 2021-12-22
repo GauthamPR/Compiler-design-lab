@@ -219,7 +219,7 @@ void main(){
 
     UI();
     constructDFA();
-    printNFA();
+    // printNFA();
     printDFA();
     printf("\n");
 }
