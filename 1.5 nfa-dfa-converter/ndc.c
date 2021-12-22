@@ -1,3 +1,11 @@
+/*  
+    NFA-DFA converter
+    -----------------
+
+    1.  Indexes of states(NFA/DFA) = state index
+    2.  State value of NFA = sum of(2^i), where i are the state values of DFA combined to make the NFA state
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -7,13 +15,9 @@
 #define MAX_SYMBOLS 10
 #define EPSILON '#'
 
-int createDFAState(int *);
-
-int newDFAStateFlag=0;
-
 struct state{
     int value;
-    int transitionTop;
+    int transitionTop; //stack top for transitions
     struct transition * transitions[MAX_TRANS];
 };
 
@@ -27,6 +31,9 @@ struct state *DFAStates[MAX_STATES * MAX_STATES];
 int finalStatesOfNFA[MAX_STATES], initState, nOfStates, nOfFinalStates;
 char symbols[MAX_SYMBOLS];
 
+int createDFAState(int *);
+
+//adds symbol uniquely to the global symbols array
 void addSymbol(char symbol){
     for(int i=0; i<MAX_SYMBOLS; i++){
         if(symbols[i]==symbol)
@@ -38,6 +45,7 @@ void addSymbol(char symbol){
     }
 }
 
+//creates an NFA state from user input
 void createNFAState(int value){
     NFAStates[value] = (struct state*) malloc(sizeof(struct state));
     NFAStates[value]->value = value;
@@ -47,6 +55,7 @@ void createNFAState(int value){
     }
 }
 
+//creates NFA-transitions from user input
 void createNFATransition(struct state * fromState, struct state * nextState, char symbol){
     struct transition *t;
     t = (struct transition*) malloc(sizeof(struct transition));
@@ -57,6 +66,7 @@ void createNFATransition(struct state * fromState, struct state * nextState, cha
     fromState->transitionTop++;
 }
 
+//create DFA transitions from and to state through a symbol
 void createDFATransition(struct state * fromState, struct state * nextState, char symbol){
     struct transition *t;
     t = (struct transition*) malloc(sizeof(struct transition));
@@ -94,6 +104,7 @@ void UI(){
 
     printf("\nEnter total number of transitions: ");
     scanf("%d", &nOfTransitions);
+
     //create transitions from each states
     for(int i=0; i<nOfTransitions; i++){
         printf("\nEnter transition: (old state)     (symbol)    (new state): ");
@@ -112,17 +123,22 @@ void UI(){
     for(int i=0; i<nOfFinalStates; i++){
         scanf("%d", &finalStatesOfNFA[i]);
     }
-    // printf("\n value: %d\n", states[0]->transitions[0]->nextState->value);
 }
 
+//find the epsilon closure of 2nd arg and store state-indexes/values in 1st arg
 int * findEpsilonClosure(int * epsilonSetValues, int stateValue){
     int index;
+
+    //find the next empty space in epsilon set or return function if epsilon-closure of state has already been found
     for(index=0 ; epsilonSetValues[index]!=-1; index++){
         if(epsilonSetValues[index] == stateValue){
             return epsilonSetValues;
         }
     };
-    epsilonSetValues[index++] = stateValue;
+
+    epsilonSetValues[index++] = stateValue; //every state in its own epsilon-closure
+
+    //for each epsilon-transition from state, find the epsilon-closure of transition-next-state
     for(int i=0; i<NFAStates[stateValue]->transitionTop; i++){
         if(NFAStates[stateValue]->transitions[i] && NFAStates[stateValue]->transitions[i]->symbol==EPSILON){
             findEpsilonClosure(epsilonSetValues, NFAStates[stateValue]->transitions[i]->nextState->value);
@@ -131,25 +147,26 @@ int * findEpsilonClosure(int * epsilonSetValues, int stateValue){
     return epsilonSetValues;
 }
 
+//resets entire array
 void resetArr(int * arr){
     for(int i=0; i<MAX_STATES; i++){
         arr[i] = -1;
     }
 }
 
+//create a DFA state from a combination of NFA states
 int createDFAState(int NFAStateValues[]){
     
-    int currentGrpValues[MAX_STATES]; // all the states reachable by epsilon moves from NFA-states
-    int nextGrpValues[MAX_STATES];
-    for(int i=0; i<MAX_STATES; i++){
-        currentGrpValues[i] = -1;
-    }
+    int currentGrpValues[MAX_STATES]; // epsilon-closure of provided NFA states
+    int nextGrpValues[MAX_STATES];  // epsilon-closure of NFA states after transition(calculated for each symbol)
+    int sumOfGrpValues = 0, sumOfNextGrpValues = 0; //state value of new DFA state
+    
+    resetArr(currentGrpValues);
 
     for(int i=0; NFAStateValues[i]!=-1; i++){
         findEpsilonClosure(currentGrpValues, NFAStateValues[i]);
     }
 
-    int sumOfGrpValues = 0, sumOfNextGrpValues = 0;
     for(int i=0; currentGrpValues[i]!=-1; i++){
         sumOfGrpValues += pow(2, currentGrpValues[i]);
     }
@@ -163,6 +180,7 @@ int createDFAState(int NFAStateValues[]){
         return sumOfGrpValues;
     }
 
+    //for each symbol except epsilon find epsilon-closure of state after transition using the symbol
     for(int j=0; symbols[j]!='\0'; j++){
         resetArr(nextGrpValues);
         if(symbols[j] != EPSILON){
@@ -173,6 +191,8 @@ int createDFAState(int NFAStateValues[]){
                     }
                 }
             }
+
+            //create new DFA state and add transition
             sumOfNextGrpValues = createDFAState(nextGrpValues);
             createDFATransition(DFAStates[sumOfGrpValues], DFAStates[sumOfNextGrpValues], symbols[j]);
         }
@@ -180,7 +200,7 @@ int createDFAState(int NFAStateValues[]){
     return sumOfGrpValues;
 }
 
-void constructDFA(){
+void initializeDFAConstruction(){
     int arr[] = {0 , -1};
     createDFAState(arr);
 }
@@ -200,6 +220,7 @@ void printDFA(){
     }
 }
 
+//for debug
 void printNFA(){
     printf("\n\nNFA");
     printf("\n---");
@@ -218,8 +239,8 @@ void printNFA(){
 void main(){
 
     UI();
-    constructDFA();
     // printNFA();
+    initializeDFAConstruction();
     printDFA();
     printf("\n");
 }
