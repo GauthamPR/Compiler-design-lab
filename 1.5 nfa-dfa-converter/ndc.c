@@ -85,12 +85,6 @@ void UI(){
     int nOfTransitions, fromState, toState;
     char symbol;
 
-    FILE *fptr = fopen("./input.txt", "r");
-    if(fptr == NULL){
-        printf("Error!");
-    }
-
-
     //create nfa states
     printf("\nEnter number of states: ");
     scanf("%d", &nOfStates);
