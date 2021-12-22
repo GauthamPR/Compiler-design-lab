@@ -7,7 +7,7 @@
     - Implementation of Calculator using LEX and YACC
 3.	Convert the BNF rules into YACC form and write code to generate abstract syntax tree
 4.	Implement Intermediate code generation for programming language constructs such as arithmentic expressions, conditional statement & iterative statements.
-5.	Write program to convert NFA to DFA and minimize the DFA (Use Subset Construction Algorithm)
+5.	[Write program to convert ε-NFA to DFA and minimize the DFA (Use Subset Construction Algorithm)](/1.5%20nfa-dfa-converter)
 6.	[Write program to Simulate FIRST and FOLLOW of any given grammar](/1.6%20first-and-follow)
 7.	[Develop an operator precedence parser for a given language](/1.7%20operator-precedence-parser)
 8.	[Construct a recursive descent parser for an expression](/1.8%20recursive-descent-parser)
