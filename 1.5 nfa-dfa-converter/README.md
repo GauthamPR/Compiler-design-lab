@@ -1,9 +1,4 @@
 # NFA to DFA converter
-
-## Implementation Details
-1.  Indexes of states(NFA/DFA) = state index
-2.  State value of NFA = sum of(2^i), where i are the state values of DFA combined to make the NFA state
-
 ## Examples
 ### Example-1
 #### Input

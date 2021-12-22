@@ -2,7 +2,7 @@
     NFA-DFA converter
     -----------------
 
-    1.  Indexes of states(NFA/DFA) = state index
+    1.  Array indexes of states(NFA/DFA) = respective state value
     2.  State value of NFA = sum of(2^i), where i are the state values of DFA combined to make the NFA state
 */
 
