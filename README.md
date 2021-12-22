@@ -2,9 +2,9 @@
 
 ## Cycle 1
 1.  [Implementation of Lexical Analyzer for C using Lex Tool](/1.1%20lex-analyzer)
-2.  Generate YACC specification for a few syntactic categories
-    - Program to recognize a valid arithmetic expression that uses operator +, – , * and/.
-    - Implementation of Calculator using LEX and YACC
+2.  [Generate YACC specification for a few syntactic categories](/1.2%20yacc)
+    - [Program to recognize a valid arithmetic expression that uses operator +, – , * and/.](/1.2%20yacc/1.2.1%20op-statements)
+    - [Implementation of Calculator using LEX and YACC](/1.2%20yacc/1.2.2%20calculator)
 3.	Convert the BNF rules into YACC form and write code to generate abstract syntax tree
 4.	Implement Intermediate code generation for programming language constructs such as arithmentic expressions, conditional statement & iterative statements.
 5.	[Write program to convert ε-NFA to DFA and minimize the DFA (Use Subset Construction Algorithm)](/1.5%20nfa-dfa-converter)
