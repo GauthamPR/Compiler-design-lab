@@ -5,13 +5,13 @@
     int yyerror(char *);
 %}
 
-%token DIGIT ID OP
+%token DIGIT
 
 %left OP
 
 %%
-stmt :   ID '=' exp ';' {printf("Parsing successful\n");};
-exp :    exp OP exp | DIGIT | ID;
+stmt :   exp '='{printf("%d\n", $1);};
+exp :    exp OP exp {$$ = ($2=='+')?($1+$3) : ($2=='-')?($1-$3) :($2=='*')?($1*$3) :($2=='/')?($1/$3) : 0;} | DIGIT;
 %%
 
 int yyerror(char *s){

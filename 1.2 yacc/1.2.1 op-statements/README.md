@@ -1,4 +1,4 @@
-# Lexical analyzer for C using lex tool
+# Yacc parser
 
 ## Example
 
