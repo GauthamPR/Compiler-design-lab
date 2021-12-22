@@ -1,7 +1,7 @@
 # NFA to DFA converter
 
-## Example
-
+## Examples
+### Example-1
 #### Input
 ```
 4
@@ -20,35 +20,6 @@
 ```
 #### Output (*stdout*)
 ```
-NFA
----
-
-State value: 0
--------------------
-Symbol: a
-Next state: 1
-Symbol: #
-Next state: 2
-
-State value: 1
--------------------
-Symbol: b
-Next state: 1
-Symbol: b
-Next state: 3
-
-State value: 2
--------------------
-Symbol: #
-Next state: 1
-Symbol: a
-Next state: 3
-
-State value: 3
--------------------
-Symbol: a
-Next state: 2
-
 DFA
 ---
 
@@ -86,4 +57,48 @@ Symbol: a
 Next state: 6
 Symbol: b
 Next state: 10
+ ```
+### Example-2
+#### Input
+```
+3
+8
+0 a 1
+0 a 2
+0 b 0
+0 # 1
+1 b 1
+1 # 2
+2 a 2
+2 b 2
+0
+2
+2
+3
+```
+#### Output (*stdout*)
+```
+DFA
+---
+
+State value: 4
+-------------------
+Symbol: a
+Next state: 4
+Symbol: b
+Next state: 4
+
+State value: 6
+-------------------
+Symbol: a
+Next state: 4
+Symbol: b
+Next state: 6
+
+State value: 7
+-------------------
+Symbol: a
+Next state: 6
+Symbol: b
+Next state: 7
  ```
