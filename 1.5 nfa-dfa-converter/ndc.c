@@ -18,6 +18,7 @@
 struct state{
     int value;
     int transitionTop; //stack top for transitions
+    int finalState;
     struct transition * transitions[MAX_TRANS];
 };
 
@@ -114,8 +115,11 @@ void UI(){
     scanf("%d", &nOfFinalStates);
 
     printf("\nEnter final states: ");
-    for(int i=0; i<nOfFinalStates; i++){
-        scanf("%d", &finalStatesOfNFA[i]);
+    for(int i=0; i<MAX_STATES; i++){
+        if(i<nOfFinalStates)
+            scanf("%d", &finalStatesOfNFA[i]);
+        else
+            finalStatesOfNFA[i] = -1;
     }
 }
 
@@ -170,6 +174,16 @@ int createDFAState(int NFAStateValues[]){
         DFAStates[sumOfGrpValues] = (struct state*) malloc(sizeof(struct state));
         DFAStates[sumOfGrpValues]->value = sumOfGrpValues;
         DFAStates[sumOfGrpValues]->transitionTop = 0;
+        DFAStates[sumOfGrpValues]->finalState = 0;
+        
+        for(int i=0; currentGrpValues[i]!=-1; i++){
+            for(int j=0; j<nOfFinalStates; j++){
+                if(finalStatesOfNFA[j]==currentGrpValues[i]){
+                    DFAStates[sumOfGrpValues]->finalState = 1;
+                    break;
+                }
+            }
+        }
     }else{
         return sumOfGrpValues;
     }
@@ -195,7 +209,7 @@ int createDFAState(int NFAStateValues[]){
 }
 
 void initializeDFAConstruction(){
-    int arr[] = {0 , -1};
+    int arr[] = {initState , -1};
     createDFAState(arr);
 }
 
@@ -205,6 +219,9 @@ void printDFA(){
     for(int i=0; i<MAX_STATES*MAX_STATES; i++){
         if(DFAStates[i]!=NULL){
             printf("\n\nState value: %d", DFAStates[i]->value);
+            if(DFAStates[i]->finalState==1){
+                printf(" (final)");
+            }
             printf("\n-------------------");
             for(int j=0; j<DFAStates[i]->transitionTop; j++){
                 printf("\nSymbol: %c", DFAStates[i]->transitions[j]->symbol);
