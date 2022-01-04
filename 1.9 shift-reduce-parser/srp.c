@@ -105,11 +105,14 @@ void printStackAndQ(){
 
 void parse(){
 
-    while(!(stack[0]=='$' &&stack[1]==START_SYMBOL && queue[front]=='$')){
+    while(!(stack[0]=='$' &&stack[1]==START_SYMBOL && queue[front]=='$' && top==1)){
         
         printStackAndQ();
-        
         if(findAndReduceHandles()!=1){
+            if(queue[front]=='$'){
+                printf("\t\tUnaccepted\n");
+                exit(0);
+            }
             printf("\t\tShift\n");
             top++;
             stack[top]=queue[front++];
