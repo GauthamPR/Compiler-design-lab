@@ -12,3 +12,13 @@
 7.	[Develop an operator precedence parser for a given language](/1.7%20operator-precedence-parser)
 8.	[Construct a recursive descent parser for an expression](/1.8%20recursive-descent-parser)
 9.	[Construct a Shift Reduce Parser for a given language](/1.9%20shift-reduce-parser)
+
+## Compiling C
+**gcc** _\<pgm-name\>_ **-lm** *(arg for pow.h)*
+
+## Building lex & yacc
+**lex** _\<lex-file-name\>_
+
+**yacc -d** _\<yacc-file-name\>_
+
+**gcc lex.yy.c y.tab.c**
