@@ -29,28 +29,28 @@ Next state: 0
 Symbol: b
 Next state: 0
 
-State value: 6
+State value: 6 (final)
 -------------------
 Symbol: a
 Next state: 8
 Symbol: b
 Next state: 10
 
-State value: 7
+State value: 7 (final)
 -------------------
 Symbol: a
 Next state: 10
 Symbol: b
 Next state: 10
 
-State value: 8
+State value: 8 (final)
 -------------------
 Symbol: a
 Next state: 6
 Symbol: b
 Next state: 0
 
-State value: 10
+State value: 10 (final)
 -------------------
 Symbol: a
 Next state: 6
@@ -71,30 +71,29 @@ Next state: 10
 2 a 2
 2 b 2
 0
+1
 2
-2
-3
 ```
 #### Output (*stdout*)
 ```
 DFA
 ---
 
-State value: 4
+State value: 4 (final)
 -------------------
 Symbol: a
 Next state: 4
 Symbol: b
 Next state: 4
 
-State value: 6
+State value: 6 (final)
 -------------------
 Symbol: a
 Next state: 4
 Symbol: b
 Next state: 6
 
-State value: 7
+State value: 7 (final)
 -------------------
 Symbol: a
 Next state: 6
